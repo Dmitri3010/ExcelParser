@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using ExcelParser.MVVM;
-using System.Linq;
 using System.Windows;
+using ExcelParser.Tools;
 using Spire.Xls;
-using Spire.Xls.Core;
 
 
 namespace ExcelParser
@@ -15,6 +14,10 @@ namespace ExcelParser
     public partial class MainWindow : Window
     {
         private DefaultDialogService DefaultDialog { get; }
+//        private  Workbook NewBook => new Workbook()
+
+//        private static Workbook CurrentBook => new Workbook();
+
 
         public MainWindow()
         {
@@ -24,88 +27,52 @@ namespace ExcelParser
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var Worksheets = new Dictionary<string, IWorksheet>();
+            var Newbook = new Workbook();
             var path = string.Empty;
+            var CurrentBook = new Workbook();
             try
             {
                 DefaultDialog.OpenFileDialog();
                 path = DefaultDialog.FilePath;
+//                var workbook = new Workbook();
+
+                CurrentBook.LoadFromFile(path);
             }
             catch (Exception ex)
             {
                 DefaultDialog.ShowMessage(ex.Message);
             }
 
-            var finalBook = new Workbook();
-            finalBook.LoadFromFile("../../../EmptyTable.xlsx");
+//            var finalBook = new Workbook();
+//            finalBook.LoadFromFile("../../../EmptyTable.xlsx");
+//
+//            var finalSheet = finalBook.Worksheets[0];
 
-            var finalSheet = finalBook.Worksheets[0];
+//            var newBook = new Workbook();
+//
+//            var newSheet = newBook.Worksheets[0];
 
-            var newBook = new Workbook();
-
-            var newSheet = newBook.Worksheets[0];
-
-            var workbook = new Workbook();
-
-            workbook.LoadFromFile(path);
-
-            foreach (var worksheet in workbook.Worksheets)
+            try
             {
-                if (worksheet.CodeName.ToUpper() != "ИТОГ")
-                {
-                    Worksheets.Add(worksheet?.CodeName, worksheet);
-                }
+                Newbook = Parser.Parse(CurrentBook);
             }
-
-//            var sheet = workbook.Worksheets[0];
-
-            var i = 1;
-
-            var columnCount = Worksheets.Count;
-
-            CellRange source = finalSheet.Range[finalSheet.Columns[0].Row, 1, finalSheet.Columns[0].Row, columnCount];
-            CellRange dest = newSheet.Range[i, 1, i, columnCount];
-            finalSheet.Copy(source, dest, true);
-
-            i = 2;
-            foreach (var sheet in Worksheets)
+            catch (Exception ex)
             {
-                newSheet.Range["B" + i].Value = sheet.Key;
-                var ccc = sheet.Value.Cells.FirstOrDefault(p => p.Value.ToLower() == "итого");
-                
-                if (sheet.Value.Range.Value?.ToLower() == "итого")
-                {
-//                    CellRange sourceRange = sheet.Value.Range[sheet.Value.Range.Row, 1, sheet.Value.Range.Row];
-//                    newSheet.InsertRow(i);
-                    var cc = sheet.Value.Range;
-                    // newSheet.Copy(sheet.Value.Range[sheet.Value.Range.Row, i, sheet.Value.Range.Row, "AI"+i ], newSheet.Range[$"D{i}:AI{i}"], true);
-
-                }
-
-//                newSheet.Range[sheet.Value.Columns[2].Row, 1, sheet.Value.Columns[0].Row, sheet.Value.Columns.Length]
-//                for (int j = 0; j <= 32; j++)
-//                {
-//                    
-//                }
-                i++;
+                DefaultDialog.ShowMessage(ex.Message);
+                DefaultDialog.ShowMessage("Что-то пошло не так. Попробуйте еще раз");
+                throw new Exception();
             }
-
-//            foreach (var worksheet in Worksheets)
+//            finally
 //            {
-////                if (range.Text == "teacher")
-////
-////                {
-//                CellRange sourceRange = sheet.Range[range.Row, 1, range.Row, columnCount];
-//
-//                CellRange destRange = newSheet.Range[i, 1, i, columnCount];
-//
-//                sheet.Copy(sourceRange, destRange, true);
-//
-//                i++;
-////                }
-//            }
+//                
+//            } 
 
-            newBook.SaveToFile(Guid.NewGuid() + ".xlsx", ExcelVersion.Version2010);
+            DefaultDialog.ShowMessage("Отчет успешно сформирован! Выберите название для файла");
+            DefaultDialog.SaveFileDialog();
+            path = DefaultDialog.FilePath;
+            Newbook.SaveToFile(path + ".xlsx", ExcelVersion.Version2010);
+            
+            DefaultDialog.ShowMessage($"Отчет успешно сохранен в папке: {Directory.GetCurrentDirectory()}");
         }
     }
 }
