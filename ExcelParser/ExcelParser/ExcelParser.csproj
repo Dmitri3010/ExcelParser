@@ -6,4 +6,8 @@
         <UseWPF>true</UseWPF>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Spire.XLS" Version="9.11.2" />
+    </ItemGroup>
+
 </Project>

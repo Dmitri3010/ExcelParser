@@ -1,17 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using ExcelParser.MVVM;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Spire.Xls;
+
 
 namespace ExcelParser
 {
@@ -20,9 +11,49 @@ namespace ExcelParser
     /// </summary>
     public partial class MainWindow : Window
     {
+        private DefaultDialogService DefaultDialog { get; }
+
         public MainWindow()
         {
             InitializeComponent();
+            DefaultDialog = new DefaultDialogService();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            DefaultDialog.OpenFileDialog();
+            var path = DefaultDialog.FilePath;
+            MessageBox.Show(path);
+
+            var newBook = new Workbook();
+
+            var newSheet = newBook.Worksheets[0];
+
+            var workbook = new Workbook();
+
+            workbook.LoadFromFile(path);
+
+            var sheet = workbook.Worksheets[0];
+
+            var i = 1;
+
+            var columnCount = sheet.Columns.Count();
+            foreach (CellRange range in sheet.Columns[2])
+            {
+//                if (range.Text == "teacher")
+//
+//                {
+                CellRange sourceRange = sheet.Range[range.Row, 1, range.Row, columnCount];
+
+                CellRange destRange = newSheet.Range[i, 1, i, columnCount];
+
+                sheet.Copy(sourceRange, destRange, true);
+
+                i++;
+//                }
+            }
+
+            newBook.SaveToFile("NewForm.xlsx", ExcelVersion.Version2010);
         }
     }
 }
