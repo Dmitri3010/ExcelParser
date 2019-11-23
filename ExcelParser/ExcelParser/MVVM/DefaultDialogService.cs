@@ -7,37 +7,26 @@ using System.Windows;
 
 namespace ExcelParser.MVVM
 {
-    class DefaultDialogService:IDialogService
+    class DefaultDialogService : IDialogService
     {
-
         public string FilePath { get; set; }
 
         public bool OpenFileDialog()
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            if (openFileDialog.ShowDialog() == true)
-            {
-                FilePath = openFileDialog.FileName;
-                return true;
-            }
-            return false;
+            var openFileDialog = new OpenFileDialog();
+            if (openFileDialog.ShowDialog() != true) return false;
+            FilePath = openFileDialog.FileName;
+            return true;
         }
 
         public bool SaveFileDialog()
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                FilePath = saveFileDialog.FileName;
-                return true;
-            }
-            return false;
+            var saveFileDialog = new SaveFileDialog();
+            if (saveFileDialog.ShowDialog() != true) return false;
+            FilePath = saveFileDialog.FileName;
+            return true;
         }
 
-        public void ShowMessage(string message)
-        {
-            MessageBox.Show(message);
-        }
+        public void ShowMessage(string message) => MessageBox.Show(message);
     }
-
 }
