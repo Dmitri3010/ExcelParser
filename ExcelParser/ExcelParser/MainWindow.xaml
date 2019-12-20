@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ExcelParser"
         mc:Ignorable="d"
-        Title="Главная страница" Height="213" Width="606">
+        Title="Главная страница" Height="213" Width="297">
     <Grid>
         <Label Content="Выберите фаил" HorizontalAlignment="Left" Margin="52,59,0,0" VerticalAlignment="Top"/>
-        <Button  Content="Открыть" Margin="200,48,118,91" Click="Button_Click"/>
+        <Button Content="Выбрать фаил" HorizontalAlignment="Left" Margin="185,62,0,0" VerticalAlignment="Top" Width="93" Click="Button_Click"/>
     </Grid>
 </Window>
